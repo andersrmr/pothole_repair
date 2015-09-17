@@ -133,6 +133,12 @@ I also need to be sure to create a feature for the neighborhood the pothole is i
 
 Additional ideas for features available from data.seattle.gov GIS shapefile datasets, https://data.seattle.gov/dataset/data-seattle-gov-GIS-shapefile-datasets/f7tb-rnup
 
+Projection issues, http://geoinformaticstutorial.blogspot.com/2012/10/reprojecting-shapefile-with-gdalogr-and.html
+
+http://matplotlib.org/basemap/users/mapsetup.html
+
+http://gis.stackexchange.com/questions/27702/what-is-the-srid-of-census-gov-shapfiles
+
 1. Traffic signal distances
 2. City of Seattle Parks
 3. Street Network Database, size of roads
@@ -145,7 +151,9 @@ I got the neighborhood membership and several distance features working.
 
 Also a "seasonality" category (actually, quarter of yr) and months till end of FY (assuming June.)
 
-Can't figure out how to scale up map bubbles by a constant factor.  I just   want them bigger.
+Can't figure out how to scale up map bubbles by a constant factor.  I just want them bigger. (http://glowingpython.blogspot.com/2011/11/how-to-make-bubble-charts-with.html)
+
+https://stevendkay.wordpress.com/2009/10/12/scatter-plots-with-basemap-and-matplotlib/
 
 
 

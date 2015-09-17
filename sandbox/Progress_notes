@@ -1,0 +1,174 @@
+14 Sept 2015
+
+AM
+
+Found online examples of geocoding by street intersetion, one involving googlemaps API - yeay!
+
+https://groups.google.com/forum/#!topic/google-maps-api-web-services/UhvCp2yyx-M
+
+https://developer.here.com/rest-apis/documentation/geocoder/topics/example-geocode-find-street-intersection.html
+
+http://blog.batchgeo.com/geocoding-intersections/
+
+Noon
+
+Excceeded my rquests quota at GoogleV3 geocoder before getting what I needed.  Before even debugging the code.  Trying to get API key to see if I can do more querying that way.
+
+AIzaSyBpxr2Rx1WbYqrxpuUg_I819YuDw0Pvm_0
+
+3:30
+
+OK, I finally have mapped the first 500 potholes/rows in my Seattle dataset.
+
+Adam gave me a tip that I can just submit my locations to batchgeo and it will plot them all for me.
+
+I need to talk to Ben again about how to structure my repo properly so that I can commmit daily.
+
+Also, for my API query limit problem, Ben suggested I might create multiple accounts, i.e., work in parallel with multiple keys
+
+
+A few of the Installs from today:
+
+http://deparkes.co.uk/2015/01/29/install-shapely-on-anaconda/
+https://pypi.python.org/pypi/Shapely
+fiona: http://toblerity.org/fiona/manual.html
+http://pysal.readthedocs.org/en/latest/users/installation.html
+
+Midnight
+
+I have code that plots potholes on Seattle neighborhood map and shows density using chloropleths.  Locations seem reasonably good.  I still don't have geocodes for all the potholes.  Also, I still don't know how to include a third "feature" on the plot, e.g., represent time to repair, say, by size of hexagons/bubble plot.
+
+One pattern is clear so far: locations/density of potholes
+
+Scale is going to be a problem.  Would have to zoom in to capture the length scale of a pothole.
+
+Also, I appear to decline from 482 city points/potholes to plotting only 121 potholes
+
+Plan for Tomorrow:
+
+0. Study geopy examples on train.
+
+1. Continue geo-coding pothole locations first thing.  Try to fill query quota for each 24 hr period.  Add geo-coded street address to df also so that I can maybe use it with zillow to get fine scale property value.  also need to geo-code some important locations, e.g., center of ea Seattle city neighborhood, Space Needle, Pike Place Market, center of City of Seattle
+
+- Census data
+- zillow research data
+- scrape from zillow
+1.create url based on a small box around each pothole location/geocode
+2.Grab the html
+3.Search for the home values within that bounding box, i.e., grab everything that looks like a property value
+
+2. Clean Seattle data completely and save cleaning code (later, can create class)
+
+3. Plot time series of time to repair potholes and quantity of potholes
+
+4. Get socio-economic data per pothole, either from zillow or census or older city data.
+
+- Reverse geocode to get street addresses.  This seems to have worked.
+- 
+
+5. Plot/overlay time to repair on maps
+
+(Wed: Get other basic feature data, e.g., road condition/weather)
+
+
+15 Sept 2015
+
+AM
+
+Used reverse geocode to obtain actual street addresses "closest to each pothole".  Pickled new dataframe.
+
+Need to remember to utilize my quota for today's geocodes.  Still should have about 2,000 queries left out of 2500.
+
+PM
+
+Starting new notebook to get socio-economic data from zillow.  Talked to Michael Hood about possible approaches.
+
+div class = 'property-listing data'
+  div class = 'property-info'
+    dt class='zestimate' Foreclosure Est:
+      $224K
+
+Scraping was a disaster.  I couldn't get anything to work.  At end of day, Adam suggested how to get census data on property values at the level of a block group at factfinder.census.gov.  I can hopefully associate potholes with the block group they fall within.  May be problems with aligning projections and/or other problems.
+
+Will suggested that I first look at how variable are the repair times by pothole location.  Depending on the variability, I may not need property values at the scale of an individual pothole.
+
+Plan for Tomorrow:
+
+Overall: Get all initial features ready by end of day to start with simplest model Thurs AM, e.g., street condition, socio-economics, distances,...
+
+Blocker: Inability to geocode all my potholes due to API query limits
+
+Blocker: Inability to get socio-economic data at level of individual pothole because of data unavailability and/or difficulty of scraping it.
+
+For example, Beautifulsoup at Zillow doesn't work.
+
+1. Figure out how to do bubble plot of geographical distribution of pothole repair times.
+
+2. geolocate 1st 2,000 rows.
+
+3. Add features of distances to major/central locations, e.g., Space Neeedle, centers of ea neighborhood district (I could do a visual estimate and get it off google maps), center of Seattle, downtown convention center.
+
+4. Try to get data on pre-existing street condition, DoT
+
+5. Back to Socio-economics
+
+
+16 Sept 2015
+
+AM
+
+(Almost) Figured out how to make the scatter plots.  I'm close enough that I think I can do it once I get the data ready.
+
+PM
+
+I've decided I'm going to go back to the cleaned data set and use today's request/query quota to geocode the first 1,000 points/potholes.  Then proceed with those points, work on features, including socio-economic data and distances, and try to be in position to model by tomorrow AM.
+
+Due to error, only got first 757.
+
+Due to another Series index error, it took a long while to get the first 757 geo-coded records.
+
+Ben suggested NLP on the LOCATION column to see if it might be predictive. 
+
+I also need to be sure to create a feature for the neighborhood the pothole is in.  This should not be difficult with the mapping code.
+
+Additional ideas for features available from data.seattle.gov GIS shapefile datasets, https://data.seattle.gov/dataset/data-seattle-gov-GIS-shapefile-datasets/f7tb-rnup
+
+1. Traffic signal distances
+2. City of Seattle Parks
+3. Street Network Database, size of roads
+4. From contour map I can get slope/elevation
+5. Locations of Traffic circles
+
+Late PM
+
+I got the neighborhood membership and several distance features working.
+
+Also a "seasonality" category (actually, quarter of yr) and months till end of FY (assuming June.)
+
+Can't figure out how to scale up map bubbles by a constant factor.  I just   want them bigger.
+
+
+
+17 Sept 2015
+
+Plan for Today
+
+Meet with Ben to do git versioning set-up
+
+Figure out how to expand my bubbles on bubble plot
+
+Book some time with Giovanna to try to scrape zillow
+
+Identify a way forward to get the rest of the data
+
+Produce my initial models based on the features I have.
+
+- LR, Decision Tree, Random Forest, Gradient Boosted
+
+Tomorrow
+
+Get the socio-economic data somehow
+
+AM
+
+

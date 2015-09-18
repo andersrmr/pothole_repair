@@ -155,6 +155,8 @@ Can't figure out how to scale up map bubbles by a constant factor.  I just want 
 
 https://stevendkay.wordpress.com/2009/10/12/scatter-plots-with-basemap-and-matplotlib/
 
+http://basemaptutorial.readthedocs.org/en/latest/plotting_data.html#scatter
+
 
 
 17 Sept 2015
@@ -178,5 +180,34 @@ Tomorrow
 Get the socio-economic data somehow
 
 AM
+
+Ming helped me get the bubble chart to work.
+
+PM
+
+Got my MVP/baseline model working, R^2 with basic Random Forest = 0.4
+
+Colin, Ming suggested .DoY to transform the datetime variable.  Need to add this to the create_seasonality_feature script(s).
+
+Couldn't get my horiz bar plot of importances to display hte name of the feature.  See http://stackoverflow.com/questions/9626298/matplotlib-chart-creating-horizontal-bar-chart
+
+4:00 PM
+
+Spend rest of day doing EDA on new features for a bit, then trying to get socio-economic info.
+
+Evan found a link to building permit data that might be a surrogate for the housing data at https://data.seattle.gov/Permitting/Building-Permits-Current/mags-97de.  There should definitely be a way to get socio-economic data here, say, using a clustering approach to determine which records to represent a pothole.  Ben suggests this is too far a stretch.
+
+Plan for Tomorrow
+
+Try to get the rest of the pothole data
+
+Get more features
+
+Feature engineering
+
+Plan for Weekend
+
+Clean up my code, transfer out of IPython notebooks
+
 
 

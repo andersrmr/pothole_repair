@@ -210,4 +210,45 @@ Plan for Weekend
 Clean up my code, transfer out of IPython notebooks
 
 
+18 Sept 2015
+
+AM
+
+My progress has really slowed down.  I downloaded free GIS viewer to try to find the unique/identifying fields in my block map shapefile.  The block map shapefile covers all WA.  The income information is in a separate csv file.  I think it has a corresponding identifier field.  First, I have to figure out which fields the potholes are in.  Then I would have to join the information in order to get the income associated with it.  This could work.  The WA shapefile is too big.  I cannot handle/process that entire shapefile in memory.  I'm stuck.
+
+PM
+
+Talked to Zach.  Recommended basemap tutorial
+
+Notes
+
+Ideas from Mark/Adam:
+
+1. Get membership by street address.  Adam says there is an API that allows batch submission of a csv file with street addresses.
+
+2. Go through and create a set of the block grouup memberships of each pothole.  Only if that membership is greater than 1 do I have a problem.
+
+3. Spin up EC2 instances to get that job done, overcoming the apparent memory limitation of my machine.
+
+4. Recall Zach saying we can also do the Amazon EC2 instances if necessary to get the geocoding done.
+
+5. Mark also suggested colors instead of size to categorize reepair times, as those who cluster by eye better than sizes.
+
+Other ideas:
+
+1. Keep learning about basemap
+
+2. Go through the QGIS menu and figure out what it can do.
+
+3. Pull up additional Seattle and Tacoma data in QGIS and see if I may be able to pull/infer additional info about it, e.g., elevations, associations with street types.
+
+
+
+
+
+
+
+
+
+
 

@@ -182,9 +182,15 @@ def get_census_economic_vals(df):
 
     # Rename economic values
     df.rename(columns={'HD01_VD01': 'Median_Value',\
-                       'HD02_VD01': 'Margiin_of_Error'}, inplace=True)
+                       'HD02_VD01': 'Margin_of_Error'}, inplace=True)
 
     return df
+
+def do_nlp_on_location(df):
+	''''
+    Do nlp on LOCATION field and add new column to df
+	'''
+	pass
 
 if __name__ == '__main__':
     df = pd.read_pickle('../sandbox/df_first757_cleaned.pkl')

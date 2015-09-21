@@ -3,11 +3,13 @@ import numpy as np
 import cPickle as pickle
 from geopy.geocoders import GoogleV3
 
-KEY = 'AIzaSyBpxr2Rx1WbYqrxpuUg_I819YuDw0Pvm_0'
+# google API server key
+file_path = 'C:\Users\\andersrmr\.ssh\\richard_google_developer_key'
+with open(file_path) as p:
+    KEY=p.read().strip('\n')
 
-# geolocator = GoogleV3(KEY)
-geolocator = GoogleV3()
-
+geolocator = GoogleV3(KEY)
+# geolocator = GoogleV3()
 
 def clean_data():
     '''
@@ -70,7 +72,8 @@ def do_geocoding():
     Pickle result.
     '''
     df = pd.read_pickle('df_all_cleaned.pkl')
-    df = df.loc[0:2,:]
+    # df = df.loc[0:999,:]
+    df = df.loc[999:1999,:]
 
     # Forward geocoding
     geocodes = _forward_geocode(df)
@@ -96,18 +99,25 @@ def do_geocoding():
     df['address'] = addrs
 
     # Reverse geocoding
-    rev_geocodes = _reverse_geocode(df)
+    # rev_geocodes = _reverse_geocode(df)
 
     # Create Series of specific addresses from reverse geocoding; add to df
-    addrs_dets = []
-    for elem in rev_geocodes:
-        addrs_dets.append(elem[1])
-    addrs_dets = pd.Series(addrs_dets, index=inds, name='addrs_det')
+    # addrs_dets = []
+    # for elem in rev_geocodes:
+    #     addrs_dets.append(elem[1])
+    # addrs_dets = pd.Series(addrs_dets, index=inds, name='addrs_det')
 
-    df['address_detail'] = addrs_dets
+    # df['address_detail'] = addrs_dets
 
-    # df.to_pickle('df_first757_cleaned.pkl')
+    # df.to_pickle('df_first1000_cleaned.pkl')
+    df.to_pickle('df_2nd1000_cleaned.pkl')
     return df
+
+def clean_geocoded():
+    '''
+    Remove rows with poorly performing geocoding
+    '''
+    pass
 
 if __name__ == '__main__':
     # df = pd.read_pickle('../sandbox/df_first757_cleaned.pkl')
@@ -116,6 +126,6 @@ if __name__ == '__main__':
     # df = create_distances(df)
     # df = clean_data()
     df = do_geocoding()
-    # print df.head(25)
-    print df
+    print df.head(25)
+    # print df
     print df.info()

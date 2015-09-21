@@ -240,7 +240,22 @@ Other ideas:
 
 2. Go through the QGIS menu and figure out what it can do.
 
-3. Pull up additional Seattle and Tacoma data in QGIS and see if I may be able to pull/infer additional info about it, e.g., elevations, associations with street types.
+3. Pull up additional Seattle and Tacoma data in QGIS and see if I may be able to pull/infer additional info about it, e.g., elevations, ***associations with street types***.
+
+
+20 Sept 2015
+
+Over weekend I got the census socio-economic data and covnerted the create features code from ipython notebook to py files.
+
+Plan for Tomorrow
+
+Convert all cleaning and geocoding code to py files.
+Spin up EC2 instances to geocode all pothole data for Seattle.
+NLTK on location column
+Get DEM data and figure out how to do the road data, i.e., closeness to pothole locations.
+
+
+
 
 
 

@@ -73,7 +73,8 @@ def do_geocoding():
     '''
     df = pd.read_pickle('df_all_cleaned.pkl')
     # df = df.loc[0:999,:]
-    df = df.loc[999:1999,:]
+    # df = df.loc[999:1499,:]
+    df = df.loc[1499:1999,:]
 
     # Forward geocoding
     geocodes = _forward_geocode(df)
@@ -110,7 +111,7 @@ def do_geocoding():
     # df['address_detail'] = addrs_dets
 
     # df.to_pickle('df_first1000_cleaned.pkl')
-    df.to_pickle('df_2nd1000_cleaned.pkl')
+    df.to_pickle('df_1499to1999_cleaned.pkl')
     return df
 
 def clean_geocoded():

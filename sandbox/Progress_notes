@@ -255,6 +255,32 @@ NLTK on location column
 Get DEM data and figure out how to do the road data, i.e., closeness to pothole locations.
 
 
+21 Sept 2015
+
+AM
+
+Converted all cleaning and geocoding code to py files
+
+PM
+
+Set up 2 EC2 instances and confirmed that I can access the google API from them.  Also, figured out how to scp into the EC2 instances.
+
+Ran the first 2000 rows of pothole data for Seattle.  I can run another ~2500 after midnight, independent of whether I get EC2 instances going.  It looks like I should not try to run more than 500 at a time.  I have another 400 or so left for today.  I should use them before midnight.
+
+Plan for Tonight
+
+Split up job on EC2 instances and get all of my data.  
+Need separate API keys for each of the EC2 instances I run.
+
+Also do another 2500 locally after midnight.
+
+Plan for Tomorrow
+
+Get street-related and DEM-related features so that Wednesday I can do the serious modeling that is required to get a result.
+
+
+
+
 
 
 

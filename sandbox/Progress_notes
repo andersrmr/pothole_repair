@@ -269,16 +269,18 @@ Ran the first 2000 rows of pothole data for Seattle.  I can run another ~2500 af
 
 Plan for Tonight
 
-Split up job on EC2 instances and get all of my data.  
+2. Split up job on EC2 instances and get all of my data.  
 Need separate API keys for each of the EC2 instances I run.
 
-Also do another 2500 locally after midnight.
+3. Also do another 2500 locally after midnight.
+
+1. Also, put together (stack, rowbind) the different pieces of geocoded rows then run the entire pipeline to generate featured, cleaned data ready to submit to model.
 
 Plan for Tomorrow
 
 Get street-related and DEM-related features so that Wednesday I can do the serious modeling that is required to get a result.
 
-
+Aside: Another interesting thing to try to predict/forecast is the pattern of occurence of potholes.  Is there a seasonal pattern?  When do potholes take place?
 
 
 

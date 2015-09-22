@@ -193,10 +193,12 @@ def do_nlp_on_location(df):
 	pass
 
 if __name__ == '__main__':
-    df = pd.read_pickle('../sandbox/df_first757_cleaned.pkl')
-    # df = get_neighborhoods(df)
-    # df = get_census_economic_vals(df)
-    # df = create_distances(df)
+    df = pd.read_pickle('df_1to1999_geo_cleaned.pkl')
+    df = create_distances(df)
     df = create_seasonality(df)
+    df = get_neighborhoods(df)
+    df = get_census_economic_vals(df)
+    df.to_pickle('df_1to1999_features.pkl')
     print df.head(25)
+    print df.tail(25)
 

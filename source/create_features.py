@@ -174,7 +174,7 @@ def get_census_economic_vals(df):
     df_econ['GEOID'] = df_econ['GEOID'].astype('unicode')
     df = pd.merge(df, df_econ, how='left', on='GEOID')
 
-    # Convert economic values to floats
+    # Convert economic values to floats, NaNs if not possible
     df['HD01_VD01'] = df['HD01_VD01'].\
         convert_objects(convert_numeric=True)
     df['HD02_VD01'] = df['HD02_VD01'].\

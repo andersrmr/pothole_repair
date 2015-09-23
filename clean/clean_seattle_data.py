@@ -26,14 +26,10 @@ def clean_data():
     df['FLDENDDT_dt'] = pd.to_datetime(df['FLDENDDT'])
 
     # Keep completed repairs
-    df['IS_COMPLETED'] = df['WO_STATUS'] == 'COMPLETED'
-    df = df[df['IS_COMPLETED'] == True]
-    df.drop('IS_COMPLETED', axis=1, inplace=True)
+    df = df[df['WO_STATUS'] == 'COMPLETED']
 
     # Keep only dates where end later than beginning
-    df['DATE_REVERSE'] = df['INITDT_dt'] > df['FLDENDDT_dt']
-    df = df[df['DATE_REVERSE'] == False]
-    df.drop('DATE_REVERSE', axis=1, inplace=True)
+    df = df[df['INITDT_dt'] < df['FLDENDDT_dt']]
 
     # Create repair time column and discard 0 repair times
     df['DURATION'] = df['FLDENDDT_dt'] - df['INITDT_dt']
@@ -75,7 +71,11 @@ def do_geocoding():
     # df = df.loc[0:999,:]
     # df = df.loc[999:1499,:]
     # df = df.loc[1499:1999,:]
-    df = df.loc[1999:2499,:]
+    # df = df.loc[1999:2499,:]
+    # df = df.loc[2499:2999,:]
+    # df = df.loc[2999:3499,:]
+    # df = df.loc[3499:3999,:]
+    df = df.loc[3999:4499,:]
 
     # Forward geocoding
     geocodes = _forward_geocode(df)
@@ -113,7 +113,11 @@ def do_geocoding():
 
     # df.to_pickle('df_first1000_cleaned.pkl')
     # df.to_pickle('df_999to1499_cleaned.pkl')
-    df.to_pickle('df_1999to2499_cleaned.pkl')
+    # df.to_pickle('df_1999to2499_cleaned.pkl')
+    # df.to_pickle('df_2499to2999_cleaned.pkl')
+    # df.to_pickle('df_2999to3499_cleaned.pkl')
+    # df.to_pickle('df_3499to3999_cleaned.pkl')
+    df.to_pickle('df_3999to4499_cleaned.pkl')
     return df
 
 def _append_geocoded_dfs(df1, df2):
@@ -143,12 +147,13 @@ if __name__ == '__main__':
     # df = get_census_economic_vals(df)
     # df = create_distances(df)
     # df = clean_data()
-    # df = do_geocoding()
+    df = do_geocoding()
     # df2 = pd.read_pickle('df_999to1499_cleaned.pkl')
     # df3 = pd.read_pickle('df_1499to1999_cleaned.pkl')
     # df = _append_geocoded_dfs(df2, df3)
-    # print df.head(25)
+    print df.head(25)
+    print df.tail(25)
     # print df.loc[1495:1505,:]
     # print df
-    # print df.info()
-    clean_geocoded()
+    print df.info()
+    # clean_geocoded()

@@ -283,6 +283,61 @@ Get street-related and DEM-related features so that Wednesday I can do the serio
 Aside: Another interesting thing to try to predict/forecast is the pattern of occurence of potholes.  Is there a seasonal pattern?  When do potholes take place?
 
 
+22 Sept 2015
+
+AM
+
+Worked on getting my data pipeline ready and geocoded through first 4,000 records.
+
+Adam explained that using multiple EC2 instances to query google map API won't work because queries are linked to your google ID not the machine IP.
+
+PM
+
+Talked to Giovanna, who is also stuck on getting the zpids of the homes in the lat-long window.  She'll do a little more looking; suggested I not spend more than another 1/2 hour on it today.
+
+Spend rest of afternoon getting shapefile/features from tiger lines/census that I can use to describe/differentiate between potholes.
+
+1. Primary and Secondary Roads (by state)
+2. Secondary School District (by state)
+3. Unified School District (by state)
+4. Elementary School District
+
+Got better road, elevation data from data.seattle.gov
+https://data.seattle.gov/dataset/data-seattle-gov-GIS-shapefile-datasets/f7tb-rnup
+
+Two ways to use road data:
+
+1. Create shapefile out of potholes and do the closest distances in QGIS.  (I definitely need to port the potholes to a shapefile and overlay in GIS for cool maps.)
+
+2. Query road fields in QGIS and do the closest distance using Python.
+
+Possible useful road descriptors (all categorical variables):
+
+SND_FEACOD
+ST_CODE
+SEGMENT_TY
+DIVIDED_CO
+VEHICLE_US
+
+Aside: Two nice outputs would be interesting: 
+
+1. Prediction of abundance of potholes.  
+2. Prediction of repair times to fix.
+
+The INTPTLAT (interpolated), INTPTLON fields of the block group layer as the lat-longs of the centroid of each block group.  I could do closest distance to each pothole for block groups that have this field value in order to avoid NaNs in the value field.
+
+This may be worth doing especially if econ values turns out to be a very predictive variable.  (Or even if not!)
+
+OK, so I want
+
+http://stackoverflow.com/questions/24415806/coordinate-of-the-closest-point-on-a-line
+http://gis.stackexchange.com/questions/396/nearest-neighbor-between-a-point-layer-and-a-line-layer
+
+
+
+
+
+
 
 
 

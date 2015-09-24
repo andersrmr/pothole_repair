@@ -75,7 +75,13 @@ def do_geocoding():
     # df = df.loc[2499:2999,:]
     # df = df.loc[2999:3499,:]
     # df = df.loc[3499:3999,:]
-    df = df.loc[3999:4499,:]
+    # df = df.loc[3999:4499,:]
+    # df = df.loc[4499:4999,:]
+    # df = df.loc[4999:5499,:]
+    # df = df.loc[5499:5999,:]
+    # df = df.loc[5999:6499,:]
+    # df = df.loc[6499:6999,:]
+    df = df.loc[6999:7499,:]
 
     # Forward geocoding
     geocodes = _forward_geocode(df)
@@ -117,7 +123,13 @@ def do_geocoding():
     # df.to_pickle('df_2499to2999_cleaned.pkl')
     # df.to_pickle('df_2999to3499_cleaned.pkl')
     # df.to_pickle('df_3499to3999_cleaned.pkl')
-    df.to_pickle('df_3999to4499_cleaned.pkl')
+    # df.to_pickle('df_3999to4499_cleaned.pkl')
+    # df.to_pickle('df_4499to4999_cleaned.pkl')
+    # df.to_pickle('df_4999to5499_cleaned.pkl')
+    # df.to_pickle('df_5499to5999_cleaned.pkl')
+    # df.to_pickle('df_5999to6499_cleaned.pkl')
+    # df.to_pickle('df_6499to6999_cleaned.pkl')
+    df.to_pickle('df_6999to7499_cleaned.pkl')
     return df
 
 def _append_geocoded_dfs(df1, df2):
@@ -136,10 +148,10 @@ def clean_geocoded():
     '''
     Remove rows with poorly performing geocoding
     '''
-    df = pd.read_pickle('df_1to1999_cleaned.pkl')
+    df = pd.read_pickle('df_1to6999_cleaned.pkl')
 
     df = df[df['address'] != 'Seattle, WA, USA']
-    df.to_pickle('df_1to1999_geo_cleaned.pkl')
+    df.to_pickle('df_1to6999_geo_cleaned.pkl')
 
 if __name__ == '__main__':
     # df = pd.read_pickle('../sandbox/df_first757_cleaned.pkl')
@@ -147,13 +159,14 @@ if __name__ == '__main__':
     # df = get_census_economic_vals(df)
     # df = create_distances(df)
     # df = clean_data()
-    df = do_geocoding()
-    # df2 = pd.read_pickle('df_999to1499_cleaned.pkl')
-    # df3 = pd.read_pickle('df_1499to1999_cleaned.pkl')
+    # df = do_geocoding()
+    # df2 = pd.read_pickle('df_1to6499_cleaned.pkl')
+    # df3 = pd.read_pickle('df_6499to6999_cleaned.pkl')
     # df = _append_geocoded_dfs(df2, df3)
-    print df.head(25)
-    print df.tail(25)
+    # df.to_pickle('df_1to6999_cleaned.pkl')
+    # print df2.tail(2)
+    # print df3.head(2)
     # print df.loc[1495:1505,:]
     # print df
-    print df.info()
-    # clean_geocoded()
+    # df.info()
+    clean_geocoded()

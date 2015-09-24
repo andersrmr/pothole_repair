@@ -45,16 +45,19 @@ def lr_model(df):
     '''
     INPUT: None
     OUTPUT: None
-    Run a linear LinearRegression
+    Build a linear regression model
     '''
-    y = df.pop('DURATION_td')
-    X = df
+    # y = df.pop('DURATION_td')
+    # X = df
+    pass
+
+def rf_model(df):
+    '''
+    INPUT: None
+    OUTPUT: None
+    Build a random forest model
+    '''
+    pass
     
-
-
-    
-
-
-
 if __name__ == '__main__':
     

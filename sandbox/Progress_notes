@@ -334,6 +334,30 @@ http://stackoverflow.com/questions/24415806/coordinate-of-the-closest-point-on-a
 http://gis.stackexchange.com/questions/396/nearest-neighbor-between-a-point-layer-and-a-line-layer
 
 
+23 Sept 2015
+
+AM
+
+Wanted to quickly get distance method working to determine closest street feature to each pothole.  Ran out of memory when tried to load large tuple of street objects and their features.
+
+Figured out that MultiPolygon and polys created by shape method in Shapely differ only in that MultiPolygon is a shapely object and polys is a list of shapely objects.  Need to figure out how this is going to influence my analysis, in particular, my attempts to identify closest distance.
+
+Now I've run into another issue of whether or not to remove potholes that do not fall within neighborhood and/or block group boundaries.  It seems better to leave them in, and just allow the functions to fail to assign a neighborhood label and or other features, giving NaNs instead.  At the end i can drop them from the modeling dataset. And from the map.  I would have to change the code to do this.
+
+PM
+
+Wanted to be modeling by now.  But still struggling with above issues.
+
+Questions for Giovanna' code review:
+
+1. Would you recommend classes and if so, what are recommendations for structure?
+2. Would you recommend assigning empty strings for missing values when no neighborhood or economic value or something else?
+
+
+
+
+
+
 
 
 

@@ -69,6 +69,20 @@ def create_seasonality(df):
 
     return df
 
+def _get_potholes(df):
+    '''
+    INPUT: df
+    OUTPUT: None
+    Create geometries for all potholes, get their indices and pickle as a tuple
+    '''
+    all_potholes = MultiPoint([Point(x, y) for x, y in zip(df['longitude'],\
+        df['latitude'])])
+    all_potholes = (all_potholes, df.index.tolist())
+
+    with open('all_potholes.pkl', 'w') as f:
+        pickle.dump(all_potholes, f)
+
+
 def get_neighborhoods(df):
     '''
     INPUT: df
@@ -92,10 +106,6 @@ def get_neighborhoods(df):
         neighborhoods_tup.append((mpolys[hood],\
         neighborhood_index[hood]))
 
-    # Get potholes
-    all_potholes = MultiPoint([Point(x, y) for x, y in zip(df['longitude'],\
-        df['latitude'])])
-
     # Associate each pothole with its df index
     # potholes_tup_list = []
     # for hole in xrange(df.shape[0]):
@@ -112,12 +122,11 @@ def get_neighborhoods(df):
     #         if neighborhoods_tup[hood][0].contains(potholes_tup[hole][0]):
     #             city_holes.append(potholes_tup[hole][0])
     #             city_holes_inds.append(potholes_tup[hole][1])
-    
-    all_potholes = (all_potholes, df.index.tolist())
-    # with open('city_potholes.pkl', 'w') as f:
-    with open('all_potholes.pkl', 'w') as f:
-        pickle.dump(all_potholes, f)
 
+    # Get potholes
+    with open('all_potholes.pkl') as f:
+        all_potholes = pickle.load(f)
+    
     # Extract the neighborhood index associated with each pothole
     neighborhood_label = []
     for hole in xrange(df.shape[0]):
@@ -246,19 +255,19 @@ def get_closest_distance(df):
             street_features.append([])
 
     # Add street geom features to dataframe
-    df['SND_FEACOD'] = pd.Series([elem[0] for elem in street_features]),\
+    df['SND_FEACOD'] = pd.Series([elem[0] for elem in street_features],\
         index = all_potholes[1])
 
-    df['ST_CODE'] = pd.Series([elem[1] for elem in street_features]),\
+    df['ST_CODE'] = pd.Series([elem[1] for elem in street_features],\
         index = all_potholes[1])
 
-    df['SEGMENT_TY'] = pd.Series([elem[2] for elem in street_features]),\
+    df['SEGMENT_TY'] = pd.Series([elem[2] for elem in street_features],\
         index = all_potholes[1])
 
-    df['DIVIDED_CO'] = pd.Series([elem[3] for elem in street_features]),\
+    df['DIVIDED_CO'] = pd.Series([elem[3] for elem in street_features],\
         index = all_potholes[1])
 
-    df['VEHICLE_US'] = pd.Series([elem[4] for elem in street_features]),\
+    df['VEHICLE_US'] = pd.Series([elem[4] for elem in street_features],\
         index = all_potholes[1])
 
     return df
@@ -270,18 +279,19 @@ def do_nlp_on_location(df):
 	pass
 
 if __name__ == '__main__':
-    df = pd.read_pickle('df_1to6999_geo_cleaned.pkl')
-    # df = create_distances(df)
-    # df = create_seasonality(df)
-    # df = get_neighborhoods(df)
-    # df = get_census_economic_vals(df)
-    # df.to_pickle('df_1to6999_features.pkl')
+    df = pd.read_pickle('df_1to7499_geo_cleaned.pkl')
+    _get_potholes(df)
+    df = create_distances(df)
+    df = create_seasonality(df)
+    df = get_neighborhoods(df)
+    df = get_census_economic_vals(df)
     df = get_closest_distance(df)
+    df.to_pickle('df_1to7499_features.pkl')
     print df.head()
-    # print df.tail(25)
+    print df.tail(25)
     df.info()
     # print df[pd.isnull(df.neighborhood_label)]
-    # print df[df.neighborhood_label == ''].shape
-    # print df[df.GEOID == ''].shape
+    print df[df.neighborhood_label == ''].shape
+    print df[df.GEOID == ''].shape
 
 

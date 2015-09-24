@@ -81,7 +81,7 @@ def do_geocoding():
     # df = df.loc[5499:5999,:]
     # df = df.loc[5999:6499,:]
     # df = df.loc[6499:6999,:]
-    df = df.loc[6999:7499,:]
+    df = df.loc[7499:7999,:]
 
     # Forward geocoding
     geocodes = _forward_geocode(df)
@@ -129,7 +129,7 @@ def do_geocoding():
     # df.to_pickle('df_5499to5999_cleaned.pkl')
     # df.to_pickle('df_5999to6499_cleaned.pkl')
     # df.to_pickle('df_6499to6999_cleaned.pkl')
-    df.to_pickle('df_6999to7499_cleaned.pkl')
+    df.to_pickle('df_7499to7999_cleaned.pkl')
     return df
 
 def _append_geocoded_dfs(df1, df2):
@@ -148,22 +148,21 @@ def clean_geocoded():
     '''
     Remove rows with poorly performing geocoding
     '''
-    df = pd.read_pickle('df_1to6999_cleaned.pkl')
+    df = pd.read_pickle('df_1to7499_cleaned.pkl')
 
     df = df[df['address'] != 'Seattle, WA, USA']
-    df.to_pickle('df_1to6999_geo_cleaned.pkl')
+    df.to_pickle('df_1to7499_geo_cleaned.pkl')
 
 if __name__ == '__main__':
-    # df = pd.read_pickle('../sandbox/df_first757_cleaned.pkl')
     # df = get_neighborhoods(df)
     # df = get_census_economic_vals(df)
     # df = create_distances(df)
     # df = clean_data()
     # df = do_geocoding()
-    # df2 = pd.read_pickle('df_1to6499_cleaned.pkl')
-    # df3 = pd.read_pickle('df_6499to6999_cleaned.pkl')
+    # df2 = pd.read_pickle('df_1to6999_cleaned.pkl')
+    # df3 = pd.read_pickle('df_6999to7499_cleaned.pkl')
     # df = _append_geocoded_dfs(df2, df3)
-    # df.to_pickle('df_1to6999_cleaned.pkl')
+    # df.to_pickle('df_1to7499_cleaned.pkl')
     # print df2.tail(2)
     # print df3.head(2)
     # print df.loc[1495:1505,:]

@@ -13,20 +13,24 @@ def clean_prep_before_model():
     Read in pickled df with all features computed.  Do final cleaning,
     then pass cleaned df to model steps
     '''
-    df = pd.read_pickle('df_1to1999_features.pkl')
+    df = pd.read_pickle('df_1to7499_features.pkl')
 
-    # Keep only rows with no Median_Value, neighborhood_label NaNs
+    # Keep only rows with no Median_Value, neighborhood_label, street feature NaNs
     if np.any(pd.isnull(df['Median_Value'])):
     	df = df[np.isfinite(df['Median_Value'])]
 
     if np.any(pd.isnull(df['neighborhood_label'])):
         df = df[np.isfinite(df['neighborhood_label'])]
 
+    if np.any(pd.isnull(df['SND_FEACOD'])):
+        df = df[np.isfinite(df['SND_FEACOD'])]
+
     # Keep only the columns for modeling
     df = df.ix[:, ['neighborhood_label','INIT_Quarter','INIT_month','days_end_FY',\
         'Median_Value','Queene_Anne_dist','Woodland_Park_dist','Space_Needle_dist',\
         'Seattle_dist','latitude','longitude','INITDT_dt','FLDENDDT_dt','DURATION',\
-        'DURATION_td','Margin_of_Error','Convention_Center_dist','Pike_Place_dist']]
+        'DURATION_td','Margin_of_Error','Convention_Center_dist','Pike_Place_dist',\
+        'SND_FEACOD','ST_CODE','SEGMENT_TY','DIVIDED_CO','VEHICLE_US']]
 
     if df.isnull().values.any():
     	print 'You still have NaNs'
@@ -35,8 +39,10 @@ def clean_prep_before_model():
     df = pd.concat([df.ix[:, ['Queene_Anne_dist','Woodland_Park_dist','DURATION_td',\
         'Space_Needle_dist','Convention_Center_dist','Pike_Place_dist',\
         'Seattle_dist','latitude','longitude','Median_Value','Margin_of_Error']],\
-        df_all.neighborhood_label.astype('category'),\
-        df_all.INIT_Quarter.astype('category'),\
+        df.neighborhood_label.astype('category'),df.SND_FEACOD.astype('category'),\
+        df.INIT_Quarter.astype('category'),df.ST_CODE.astype('category'),\
+        df.SEGMENT_TY.astype('category'),df.DIVIDED_CO.astype('category'),\
+        df.DIVIDED_CO.astype('category'),\
         df_all.INIT_month.astype('int')], axis=1)
 
     return df
@@ -60,4 +66,7 @@ def rf_model(df):
     pass
     
 if __name__ == '__main__':
+    df = clean_prep_before_model()
+    rf_model(df)
+
     

@@ -15,15 +15,15 @@ def clean_prep_before_model():
     '''
     df = pd.read_pickle('df_1to7499_features.pkl')
 
-    # Keep only rows with no Median_Value, neighborhood_label, street feature NaNs
-    if np.any(pd.isnull(df['Median_Value'])):
-    	df = df[np.isfinite(df['Median_Value'])]
+    # Keep only rows with no Median_Value NaNs, neighborhood_label == '', NaNs; 
+    # street feature NaNs
+    df = df[np.isfinite(df['Median_Value'])]
+    df = df[df['neighborhood_label'] != '']
+    df = df[np.isfinite(df['neighborhood_label'])]
+    df = df[np.isfinite(df['SND_FEACOD'])]
 
-    if np.any(pd.isnull(df['neighborhood_label'])):
-        df = df[np.isfinite(df['neighborhood_label'])]
-
-    if np.any(pd.isnull(df['SND_FEACOD'])):
-        df = df[np.isfinite(df['SND_FEACOD'])]
+    # Remove rows where DURATION_td rounded to zero.
+    df = df[df.DURATION_td != 0.000]
 
     # Keep only the columns for modeling
     df = df.ix[:, ['neighborhood_label','INIT_Quarter','INIT_month','days_end_FY',\
@@ -33,8 +33,10 @@ def clean_prep_before_model():
         'SND_FEACOD','ST_CODE','SEGMENT_TY','DIVIDED_CO','VEHICLE_US']]
 
     if df.isnull().values.any():
-    	print 'You still have NaNs'
-    	return df
+        print 'You still have NaNs'
+        return df
+
+    df.to_pickle('df_1to7499_alldata.pkl')
 
     df = pd.concat([df.ix[:, ['Queene_Anne_dist','Woodland_Park_dist','DURATION_td',\
         'Space_Needle_dist','Convention_Center_dist','Pike_Place_dist',\
@@ -42,8 +44,7 @@ def clean_prep_before_model():
         df.neighborhood_label.astype('category'),df.SND_FEACOD.astype('category'),\
         df.INIT_Quarter.astype('category'),df.ST_CODE.astype('category'),\
         df.SEGMENT_TY.astype('category'),df.DIVIDED_CO.astype('category'),\
-        df.DIVIDED_CO.astype('category'),\
-        df_all.INIT_month.astype('int')], axis=1)
+        df.INIT_month.astype('int')], axis=1)
 
     return df
 
@@ -67,6 +68,7 @@ def rf_model(df):
     
 if __name__ == '__main__':
     df = clean_prep_before_model()
-    rf_model(df)
+    df.info()
+    # rf_model(df)
 
     

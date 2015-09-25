@@ -138,6 +138,10 @@ def get_neighborhoods(df):
                 found = True
         if not found:
             neighborhood_label.append('')
+    
+    # Replace '' with NaNs
+    df['neighborhood_label'] = df['neighborhood_label'].\
+        convert_objects(convert_numeric=True)
 
     # Add labels to dataframe
     df['neighborhood_label'] = pd.Series(neighborhood_label,\
@@ -207,7 +211,7 @@ def get_census_economic_vals(df):
 
     return df
 
-def get_closest_distance(df):
+def get_closest_distance_features(df):
     '''
     INPUT: df
     OUTPUT: df
@@ -285,7 +289,7 @@ if __name__ == '__main__':
     df = create_seasonality(df)
     df = get_neighborhoods(df)
     df = get_census_economic_vals(df)
-    df = get_closest_distance(df)
+    df = get_closest_distance_features(df)
     df.to_pickle('df_1to7499_features.pkl')
     print df.head()
     print df.tail(25)

@@ -354,6 +354,98 @@ Questions for Giovanna' code review:
 2. Would you recommend assigning empty strings for missing values when no neighborhood or economic value or something else?
 
 
+24 Sept 2015
+
+AM
+
+Ran get_closest_distance function overnight.  Took over 3.5 hours.  ***Code stopped running about 7:30, just before I had to leave for the train.***
+
+Ran clean_prep_before_model this morning.  Thought I had it clean, but got "could not convert string to float" error.  ***Just happened to look at the last row and saw that there is still an empty string in the neighborhood_label column***
+
+
+Suggestions from Ben:
+
+duration models
+
+measures of performance, metrics
+RMSE, MAPE, MAE
+
+grid search on regularization parameters.
+Look at residuals, plot against fitted values
+
+Need to cast categoricals as dummies, check this, even for regression?
+
+
+Notes on presentations from Giovanna:
+
+1. repo: Sent to employers Tuesday AM
+README, put slide deck in there.  summary of results, redundant with presentation
+HIGH LEVEL, TECHNICAL DETAILS
+GUIDE TO YOUR CODE, GIVE DETAILED INSTRUCTIONS
+INSTRUCTIONS ON HOW TO RUN
+Could provide access to data on S3.  Either case, nice to have instructions.
+
+2. presentation: 4 min, 1 questions
+summary of what you did, not proportional to time spent.  1st 20 secs: what is my project?  Most time: results, what I learned, conclusions, how I solved problem, what failed; at the end, a little on future work; data science not coding specifics. about 5 slides.  business casual, comfort, hair cut
+
+3. app
+
+do app before README
+
+4. next week's schedule
+
+Mon: another practice, Giovanna makes presentation order
+Tues: repos go out, Lee will tell us who the companies are.
+Wed: dress rehearsal
+
+ProKarma
+Amazon
+9 interviewees
+13 interviewers
+7 min speed interviews after lunch
+know the ML tool that u used
+career goals, what do I want in a company
+
+
+Questions for Zach before he leaves:
+
+1. How to address outlier target points?  Should I display?
+2. Do I need to dummy variables for regression?  yes, but..
+3. Which model to try next?
+4. What to focus on in presentation?
+e.g., T-S prediction, model performance, important features, cross validation, grid search
+
+(with order of importance)
+
+2. Add category for NaNs for street features in order to recover a lot of my data.
+Replace ea entry in a column with its z-score.  May be spreading my neighborhood data too thin if I replace them all with dummies.  Could create a False/True flag to do this step.
+
+4. recast as binary classification: long vs. short repair times.
+
+6. linear model first, then random forest regression
+
+5. EDA with descriptive plots of duration (maps).  A good example: here's region a where we have econ data x, here's b with econ data y, and look at difference in repair times.  e.g., two maps side by side one showing econ data, one showing repair times
+
+7. suppose I build simple decision tree and see what splits make the most difference in outcomes.
+
+In a good talk, the model almost becomes secondary.  it's the discussion and the insights that matter.  Zach himself is very interested in what I find out.
+
+1. check counts of zeros remaining.  DONE
+
+ALSO:
+
+Should not be difficult to add the precip, temp data once it is cleaned.  Make the date/time column into an index and add in the values that correspond to that index.
+
+Tonight
+
+CREATE 5 SLIDES.  Decide on the train what's going to be on the slides.
+Keep in mind that I could do maps of any of my variables.
+
+Remember feature importances code from Adam pair.
+
+(Actually, it would not be difficult to do the time series thing.  Just do a groupby on the day and keep the counts of potholes initiated on each day.  The real issue is that there's less of a story there.)
+
+3. No, the real issue is that number of potholes could be more predictive of repair time.  I have to check this.
 
 
 

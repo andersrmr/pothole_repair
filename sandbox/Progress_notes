@@ -417,7 +417,7 @@ e.g., T-S prediction, model performance, important features, cross validation, g
 
 (with order of importance)
 
-2. Add category for NaNs for street features in order to recover a lot of my data.
+2. Add category for NaNs for street features in order to recover a lot of my data.  DONE
 Replace ea entry in a column with its z-score.  May be spreading my neighborhood data too thin if I replace them all with dummies.  Could create a False/True flag to do this step.
 
 4. recast as binary classification: long vs. short repair times.
@@ -445,8 +445,38 @@ Remember feature importances code from Adam pair.
 
 (Actually, it would not be difficult to do the time series thing.  Just do a groupby on the day and keep the counts of potholes initiated on each day.  The real issue is that there's less of a story there.)
 
-3. No, the real issue is that number of potholes could be more predictive of repair time.  I have to check this.
+3. No, the real issue is that number of potholes could be more predictive of repair time.  I have to check this.  DONE
 
+
+SLIDE 1
+
+Introduce issue: Plots of pothole abundance in Seattle.
+
+SLIDE 2
+
+Possible patterns.  Many stakeholders:
+1. WA cascade cyclists, 
+2. citizens like my neighbor who may have questions, 
+3. city leaders who might wish to know how to prioritize reources
+4. data scientists
+
+SLIDE 3
+
+A number of features were investigated
+
+SLIDE 4
+
+Result: Here's what we found.  
+
+SLIDE 5
+
+Here's what we learned
+
+SLIDE 6
+
+Other datasets available and coming online should enable us to investigate to what extent these causal factors are universal.
+
+What data science/modeling  steps might I try next to attempt this?
 
 
 

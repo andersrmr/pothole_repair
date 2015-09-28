@@ -140,8 +140,8 @@ def get_neighborhoods(df):
             neighborhood_label.append('')
     
     # Replace '' with NaNs
-    df['neighborhood_label'] = df['neighborhood_label'].\
-        convert_objects(convert_numeric=True)
+    # df['neighborhood_label'] = df['neighborhood_label'].\
+    #     convert_objects(convert_numeric=True)
 
     # Add labels to dataframe
     df['neighborhood_label'] = pd.Series(neighborhood_label,\
@@ -149,12 +149,64 @@ def get_neighborhoods(df):
 
     return df
 
+def _lookup_housing(df, filename):
+    '''
+    INPUT: df, filename path to lookup table
+    OUTPUT: df with econ value added to dataframe
+    '''
+    # Read in, prep, join housing value data
+    df_econ = pd.read_csv(filename, skiprows=range(1,2))
+    df_econ.rename(columns={'GEO.id2':'GEOID'}, inplace=True)
+    df_econ['GEOID'] = df_econ['GEOID'].astype('unicode')
+
+    df = df.reset_index()
+    df = pd.merge(df, df_econ, how='left', on='GEOID')
+    df = df.set_index('index')
+
+    # Convert economic values to floats, NaNs if not possible
+    df['HD01_VD01'] = df['HD01_VD01'].\
+        convert_objects(convert_numeric=True)
+    df['HD02_VD01'] = df['HD02_VD01'].\
+        convert_objects(convert_numeric=True)
+
+    # Rename economic values
+    df.rename(columns={'HD01_VD01': 'Median_Home_Value',\
+                       'HD02_VD01': 'Home_Margin_of_Error'}, inplace=True)
+
+    return df
+
+def _lookup_income(df, filename):
+    '''
+    INPUT: df, filename path to lookup table
+    OUTPUT: df with income value added to dataframe
+    '''
+    # Read in, prep, join housing value data
+    df_econ = pd.read_csv(filename, skiprows=range(1,3))
+    df_econ.rename(columns={'GEO.id2':'GEOID'}, inplace=True)
+    df_econ['GEOID'] = df_econ['GEOID'].astype('unicode')
+
+    df = df.reset_index()
+    df = pd.merge(df, df_econ, how='left', on='GEOID')
+    df = df.set_index('index')
+
+    # Convert economic values to floats, NaNs if not possible
+    df['HD01_VD01'] = df['HD01_VD01'].\
+        convert_objects(convert_numeric=True)
+    df['HD02_VD01'] = df['HD02_VD01'].\
+        convert_objects(convert_numeric=True)
+
+    # Rename economic values
+    df.rename(columns={'HD01_VD01': 'Median_Income',\
+                       'HD02_VD01': 'Income_Margin_of_Error'}, inplace=True)
+
+    return df
+
 def get_census_economic_vals(df):
     '''
     INPUT: df
     OUTPUT: df
-    Pass in the cleaned data as a dataframe and add a new column
-    containing economic values based on census data.
+    Pass in the cleaned data as a dataframe and add new columns
+    containing income and economic values based on census data.
     '''
     # Read in shapefile of Seattle block groups
     shapefilename = 'data/tl_2013_53_bg_Seattle'
@@ -192,22 +244,67 @@ def get_census_economic_vals(df):
     df['GEOID'] = pd.Series(block_group_label,\
         index = all_potholes[1])
  
-    # Read in, prep, join economic data
-    df_econ = pd.read_csv('data/ACS_13_5YR_B25077_with_ann.csv',\
-        skiprows=range(1,2))
-    df_econ.rename(columns={'GEO.id2':'GEOID'}, inplace=True)
-    df_econ['GEOID'] = df_econ['GEOID'].astype('unicode')
-    df = pd.merge(df, df_econ, how='left', on='GEOID')
+    df = _lookup_housing(df, 'data/ACS_13_5YR_B25077_with_ann.csv')
+    df = _lookup_income(df, 'data/ACS_13_5YR_B19013_with_ann.csv')
 
-    # Convert economic values to floats, NaNs if not possible
-    df['HD01_VD01'] = df['HD01_VD01'].\
-        convert_objects(convert_numeric=True)
-    df['HD02_VD01'] = df['HD02_VD01'].\
-        convert_objects(convert_numeric=True)
+    return df
 
-    # Rename economic values
-    df.rename(columns={'HD01_VD01': 'Median_Value',\
-                       'HD02_VD01': 'Margin_of_Error'}, inplace=True)
+def get_pothole_count(df):
+    '''
+    Pass in the cleaned data as a dataframe and add new columns representing
+    daily and cumulative number of potholes on each day a pothole was initiated.
+    '''
+    df_number_potholes = pd.DataFrame(df.groupby('INITDT_dt')['OBJECTID'].\
+        count()).reset_index()
+    df_number_potholes.rename(columns={'OBJECTID': 'Number_potholes'}, inplace=True)
+
+    cum_potholes = []
+    for date_item in xrange(df_number_potholes.shape[0]):
+        total = 0
+        for each_item in df.index.tolist():
+            if (df.ix[each_item, 'INITDT_date_only'] + df.ix[each_item, 'DURATION']\
+            > df_number_potholes.ix[date_item, 'INITDT_date_only'])\
+            and (df_number_potholes.ix[date_item, 'INITDT_date_only']\
+            >= df.ix[each_item, 'INITDT_date_only']):
+            total += 1
+                cum_potholes.append(total)
+
+    df_number_potholes['cumul_potholes'] = cum_potholes
+    df_number_potholes.to_pickle('df_number_potholes.pkl')
+
+    df['INITDT_date_only'] = df['INITDT_dt'].apply( lambda x: x.date())
+    df['INITDT_date_only'] = pd.to_datetime(df.INITDT_date_only)
+
+    df = df.reset_index()
+    df = pd.merge(df, df_number_potholes, how='left', on='INITDT_date_only')
+    df = df.set_index('index')
+
+    return df
+
+def get_temp(df):
+    '''
+    INPUT: df
+    OUTPUt: df
+    Pass in the cleaned data as a dataframe and add a new column representing
+    avg temp on day when pothole is initiated
+    '''
+    df_weather = pd.read_csv('data/weather.csv')
+    df_weather = df_weather[['date','Time','Temp.']]
+    df_weather.rename(columns={'Temp.': 'Temp'}, inplace=True)
+    df_weather['dt'] = pd.to_datetime(df_weather.apply(lambda x: x['date']\
+        + ' ' + x['Time'], 1))
+    df_weather = df_weather.set_index('dt')
+    df_weather = df_weather.drop(['date','Time'], axis=1)
+    df_weather = df_weather.apply(lambda x: x.str[:-5])
+    df_weather = df_weather.convert_objects(convert_numeric=True)
+    df_weather = df_weather.resample('D', how='mean')
+
+    df['INITDT_date_only'] = df['INITDT_dt'].apply( lambda x: x.date())
+    df['INITDT_date_only'] = pd.to_datetime(df.INITDT_date_only)
+
+    df = df.reset_index()
+    df = pd.merge(df, df_weather, how='left', left_on='INITDT_date_only', right_index=True)
+    df = df.set_index('index')
 
     return df
 
@@ -283,19 +380,23 @@ def do_nlp_on_location(df):
 	pass
 
 if __name__ == '__main__':
-    df = pd.read_pickle('df_1to7499_geo_cleaned.pkl')
-    _get_potholes(df)
-    df = create_distances(df)
-    df = create_seasonality(df)
-    df = get_neighborhoods(df)
-    df = get_census_economic_vals(df)
-    df = get_closest_distance_features(df)
-    df.to_pickle('df_1to7499_features.pkl')
-    print df.head()
+    # df = pd.read_pickle('df_7500to10999_geo_cleaned.pkl')
+    df = pd.read_pickle('df_1to10999_geo_cleaned.pkl')
+    # _get_potholes(df)
+    # df = create_distances(df)
+    # df = create_seasonality(df)
+    # df = get_neighborhoods(df)
+    # df = get_census_economic_vals(df)
+    # df = get_daily_pothole_count(df)
+    df = get_temp(df)
+    # df = get_closest_distance_features(df)
+    # df.to_pickle('df_7500to10999_features.pkl')
+    # df.to_pickle('df_1to10999_features.pkl')
+    print df.head(25)
     print df.tail(25)
     df.info()
     # print df[pd.isnull(df.neighborhood_label)]
-    print df[df.neighborhood_label == ''].shape
-    print df[df.GEOID == ''].shape
+    # print df[df.neighborhood_label == ''].shape
+    # print df[df.GEOID == ''].shape
 
 

@@ -49,6 +49,9 @@ def create_distances(df):
     df['Woodland_Park_dist'] = _get_distance(df, WOODLAND_PARK_ZOO_LOC) 
     df['Queene_Anne_dist'] = _get_distance(df, QUEENE_ANNE_LOC) 
 
+    df['min_dist'] = df[['Seattle_dist','Space_Needle_dist','Pike_Place_dist',\
+        'Convention_Center_dist','Woodland_Park_dist']].min(axis=1)
+
     return df
 
 def create_seasonality(df):
@@ -62,7 +65,7 @@ def create_seasonality(df):
     df['INIT_Quarter'] = pd.Series(quarters, index = df.index)
 
     days = [6 - df.ix[row, 'INITDT_dt'].month for row in df.index.tolist()]
-    df['days_end_FY'] = pd.Series(days, index = df.index)
+    df['months_end_FY'] = pd.Series(days, index = df.index)
 
     months = [df.ix[row, 'INITDT_dt'].month for row in df.index.tolist()]
     df['INIT_month'] = pd.Series(months, index = df.index)
@@ -81,7 +84,6 @@ def _get_potholes(df):
 
     with open('all_potholes.pkl', 'w') as f:
         pickle.dump(all_potholes, f)
-
 
 def get_neighborhoods(df):
     '''
@@ -106,23 +108,6 @@ def get_neighborhoods(df):
         neighborhoods_tup.append((mpolys[hood],\
         neighborhood_index[hood]))
 
-    # Associate each pothole with its df index
-    # potholes_tup_list = []
-    # for hole in xrange(df.shape[0]):
-    #     potholes_tup_list.append((all_potholes[hole], df.index.tolist()[hole]))
-
-    # Keep the potholes, indices that fall within the neighborhoods.
-    # Keep the potholes, indices.
-
-    # Pickle them for later usage.
-    # city_holes_inds = []
-    # city_holes = []
-    # for hole in xrange(len(potholes_tup)):
-    #     for hood in xrange(len(neighborhoods_tup)):
-    #         if neighborhoods_tup[hood][0].contains(potholes_tup[hole][0]):
-    #             city_holes.append(potholes_tup[hole][0])
-    #             city_holes_inds.append(potholes_tup[hole][1])
-
     # Get potholes
     with open('all_potholes.pkl') as f:
         all_potholes = pickle.load(f)
@@ -138,10 +123,6 @@ def get_neighborhoods(df):
                 found = True
         if not found:
             neighborhood_label.append('')
-    
-    # Replace '' with NaNs
-    # df['neighborhood_label'] = df['neighborhood_label'].\
-    #     convert_objects(convert_numeric=True)
 
     # Add labels to dataframe
     df['neighborhood_label'] = pd.Series(neighborhood_label,\
@@ -266,8 +247,8 @@ def get_pothole_count(df):
             > df_number_potholes.ix[date_item, 'INITDT_date_only'])\
             and (df_number_potholes.ix[date_item, 'INITDT_date_only']\
             >= df.ix[each_item, 'INITDT_date_only']):
-            total += 1
-                cum_potholes.append(total)
+                total += 1
+        cum_potholes.append(total)
 
     df_number_potholes['cumul_potholes'] = cum_potholes
     df_number_potholes.to_pickle('df_number_potholes.pkl')
@@ -373,30 +354,18 @@ def get_closest_distance_features(df):
 
     return df
 
-def do_nlp_on_location(df):
-	''''
-    Do nlp on LOCATION field and add new column to df
-	'''
-	pass
+def main():
+    df = pd.read_pickle('df_geo_cleaned.pkl')
+    _get_potholes(df)
+    df = create_distances(df)
+    df = create_seasonality(df)
+    df = get_neighborhoods(df)
+    df = get_census_economic_vals(df)
+    df = get_pothole_count(df)
+    df = get_temp(df)
+    df = get_closest_distance_features(df)
+    df.to_pickle('df_features.pkl')
 
 if __name__ == '__main__':
-    # df = pd.read_pickle('df_7500to10999_geo_cleaned.pkl')
-    df = pd.read_pickle('df_1to10999_geo_cleaned.pkl')
-    # _get_potholes(df)
-    # df = create_distances(df)
-    # df = create_seasonality(df)
-    # df = get_neighborhoods(df)
-    # df = get_census_economic_vals(df)
-    # df = get_daily_pothole_count(df)
-    df = get_temp(df)
-    # df = get_closest_distance_features(df)
-    # df.to_pickle('df_7500to10999_features.pkl')
-    # df.to_pickle('df_1to10999_features.pkl')
-    print df.head(25)
-    print df.tail(25)
-    df.info()
-    # print df[pd.isnull(df.neighborhood_label)]
-    # print df[df.neighborhood_label == ''].shape
-    # print df[df.GEOID == ''].shape
-
-
+    main()
+    

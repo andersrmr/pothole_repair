@@ -4,12 +4,7 @@ import cPickle as pickle
 from geopy.geocoders import GoogleV3
 
 # google API server key
-file_path = 'C:\Users\\andersrmr\.ssh\\richard_google_developer_key'
-with open(file_path) as p:
-    KEY=p.read().strip('\n')
-
-geolocator = GoogleV3(KEY)
-# geolocator = GoogleV3()
+KEY_FILEPATH = 'C:\Users\\andersrmr\.ssh\\richard_google_developer_key'
 
 def clean_data():
     '''
@@ -40,7 +35,8 @@ def clean_data():
     df = df[['OBJECTID','WOKEY','LOCATION','ADDRDESC','INITDT_dt',\
         'FLDSTARTDT_dt','FLDENDDT_dt','DURATION','DURATION_td']]
 
-    # df.to_pickle('df_all_cleaned.pkl')
+    df.to_pickle('df_all_cleaned.pkl')
+
     return df
 
 def _forward_geocode(df):
@@ -63,26 +59,20 @@ def do_geocoding():
     '''
     INPUT: None
     OUTPUT: None
-    Read in pickled, clean data, geocode the pothole locations, then 
-    reverse geocode them to get closest addresses to each pothole.
-    Pickle result.
+    Read in pickled, clean data, geocode the pothole locations.
+
+    ***WARNING***
+
+    RUNNING THIS CODE IGNORES THE QUERY LIMITS THAT EXIST ON THE GOOGLEMAPS API.
+    TO AVOID BEING CUT OFF, RUN IN SMALLER CHUNKS OF, SAY, 500, EVERY FEW MINUTES,
+    UP TO YOUR DAILY LIMIT OF 2,500.  USE THE ADDITIONAL FUNCTIONS BELOW, e.g., 
+    _append_geocoded_dfs to put the geocoded dataframes together.
+
+    ***WARNING***
+
     '''
     df = pd.read_pickle('df_all_cleaned.pkl')
-    # df = df.loc[0:999,:]
-    # df = df.loc[999:1499,:]
-    # df = df.loc[1499:1999,:]
-    # df = df.loc[1999:2499,:]
-    # df = df.loc[2499:2999,:]
-    # df = df.loc[2999:3499,:]
-    # df = df.loc[3499:3999,:]
-    # df = df.loc[3999:4499,:]
-    # df = df.loc[4499:4999,:]
-    # df = df.loc[4999:5499,:]
-    # df = df.loc[5499:5999,:]
-    # df = df.loc[5999:6499,:]
-    # df = df.loc[6499:6999,:]
-    df = df.loc[10999:11499,:]
-
+    
     # Forward geocoding
     geocodes = _forward_geocode(df)
 
@@ -106,30 +96,6 @@ def do_geocoding():
     df['longitude'] = longs
     df['address'] = addrs
 
-    # Reverse geocoding
-    # rev_geocodes = _reverse_geocode(df)
-
-    # Create Series of specific addresses from reverse geocoding; add to df
-    # addrs_dets = []
-    # for elem in rev_geocodes:
-    #     addrs_dets.append(elem[1])
-    # addrs_dets = pd.Series(addrs_dets, index=inds, name='addrs_det')
-
-    # df['address_detail'] = addrs_dets
-
-    # df.to_pickle('df_first1000_cleaned.pkl')
-    # df.to_pickle('df_999to1499_cleaned.pkl')
-    # df.to_pickle('df_1999to2499_cleaned.pkl')
-    # df.to_pickle('df_2499to2999_cleaned.pkl')
-    # df.to_pickle('df_2999to3499_cleaned.pkl')
-    # df.to_pickle('df_3499to3999_cleaned.pkl')
-    # df.to_pickle('df_3999to4499_cleaned.pkl')
-    # df.to_pickle('df_4499to4999_cleaned.pkl')
-    # df.to_pickle('df_4999to5499_cleaned.pkl')
-    # df.to_pickle('df_5499to5999_cleaned.pkl')
-    # df.to_pickle('df_5999to6499_cleaned.pkl')
-    # df.to_pickle('df_6499to6999_cleaned.pkl')
-    df.to_pickle('df_10999to11499_cleaned.pkl')
     return df
 
 def _append_geocoded_dfs(df1, df2):
@@ -144,28 +110,24 @@ def _append_geocoded_dfs(df1, df2):
         return df1.append(df2)
     return df1.append(df2)
 
-def clean_geocoded():
+def clean_geocoded(df):
     '''
+    INPUT: df
+    OUTPUT: None
     Remove rows with poorly performing geocoding
     '''
-    df = pd.read_pickle('df_7500to10999_cleaned.pkl')
-
     df = df[df['address'] != 'Seattle, WA, USA']
-    df.to_pickle('df_7500to10999_geo_cleaned.pkl')
+    df.to_pickle('df_geo_cleaned.pkl')
+
+def main():
+    with open(KEY_FILEPATH) as p:
+       KEY=p.read().strip('\n')
+
+    geolocator = GoogleV3(KEY)
+
+    df = clean_data()
+    df = do_geocoding()
+    clean_geocoded(df)
 
 if __name__ == '__main__':
-    # df = get_neighborhoods(df)
-    # df = get_census_economic_vals(df)
-    # df = create_distances(df)
-    # df = clean_data()
-    # df = do_geocoding()
-    # df2 = pd.read_pickle('df_1to10499_cleaned.pkl')
-    # df3 = pd.read_pickle('df_10499to10999_cleaned.pkl')
-    # df = _append_geocoded_dfs(df2, df3)
-    # df.to_pickle('df_1to10999_cleaned.pkl')
-    # print df2.tail(2)
-    # print df3.head(2)
-    # print df.loc[1495:1505,:]
-    # print df
-    # df.info()
-    clean_geocoded()
+    main()

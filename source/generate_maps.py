@@ -7,6 +7,8 @@ from shapely.prepared import prep
 import fiona
 from matplotlib.collections import PatchCollection
 from descartes import PolygonPatch
+from matplotlib.colors import BoundaryNorm
+from matplotlib.cm import ScalarMappable
 from pysal.esda.mapclassify import Natural_Breaks
 
 def custom_colorbar(cmap, ncolors, labels, **kwargs):    
@@ -16,9 +18,6 @@ def custom_colorbar(cmap, ncolors, labels, **kwargs):
     ncolors: (int) the number of discrete colors available
     labels: the list of labels for the colorbar. Should be the same length as ncolors.
     '''
-    from matplotlib.colors import BoundaryNorm
-    from matplotlib.cm import ScalarMappable
-        
     norm = BoundaryNorm(range(0, ncolors), cmap.N)
     mappable = ScalarMappable(cmap=cmap, norm=norm)
     mappable.set_array([])
@@ -29,14 +28,12 @@ def custom_colorbar(cmap, ncolors, labels, **kwargs):
     colorbar.set_ticklabels(labels)
     return colorbar
 
-def map_seattle():
+def prep_seattle_neighborhoods(df):
     '''
     INPUT: None
-    OUTPUT: None
-    Generate maps for Seattle.
+    OUTPUT: df, df, Basemap object, float, float, list, list
+    Generate neighborhood basemap and city potholes for Seattle.
     '''
-    df = pd.read_pickle('df_1to6999_geo_cleaned.pkl')
-
     shapefilename = 'data/Neighborhoods'
     shp = fiona.open(shapefilename+'.shp')
     coords = shp.bounds
@@ -65,7 +62,7 @@ def map_seattle():
         'name': [hood['S_HOOD'] for hood in m.seattle_info]
         })
 
-    # Convert our latitude and longitude into Basemap cartesian map coordinates
+     # Convert latitude and longitude, into Basemap cartesian map coordinates
     mapped_points = [Point(m(mapped_x, mapped_y)) for mapped_x, mapped_y in\
         zip(df['longitude'], df['latitude'])]
     all_points = MultiPoint(mapped_points)
@@ -76,6 +73,14 @@ def map_seattle():
     # Filter out the points that do not fall within the map we're making
     city_points = filter(hood_polygons.contains, all_points)
 
+    return df_map, m, h, w, coords, city_points
+
+def chlor_map(df, df_map, m, h, w, coords, city_points):
+    '''
+    INPUT: df, df, Basemap object, float, float, list
+    OUTPUT: None
+    Generate chloropleth map
+    '''
     # Chloropleth: No. of potholes in a neighborhood
     def num_of_contained_points(apolygon, city_points):
         return int(len(filter(prep(apolygon).contains, city_points)))
@@ -103,30 +108,138 @@ def map_seattle():
         lw=.8, alpha=1., zorder=4))
     pc = PatchCollection(df_map['patches'], match_original=True)
 
-    # apply our custom color values onto the patch collection
+    # apply custom color values onto the patch collection
     cmap_list = [cmap(val) for val in (df_map.jenks_bins.values \
         - df_map.jenks_bins.values.min())/(df_map.jenks_bins.values.max() \
         -float(df_map.jenks_bins.values.min()))]
-	pc.set_facecolor(cmap_list)
-	ax.add_collection(pc)
+    pc.set_facecolor(cmap_list)
+    ax.add_collection(pc)
 
-	#Draw a map scale
-	m.drawmapscale(coords[0] + 0.08, coords[1] + -0.01,
-	    coords[0], coords[1], 10.,
-	    fontsize=16, barstyle='fancy', labelstyle='simple',
-	    fillcolor1='w', fillcolor2='#555555', fontcolor='#555555',
-	    zorder=5, ax=ax,)
+    #Draw a map scale
+    m.drawmapscale(coords[0] + 0.08, coords[1] + -0.01,
+        coords[0], coords[1], 10.,
+        fontsize=16, barstyle='fancy', labelstyle='simple',
+        fillcolor1='w', fillcolor2='#555555', fontcolor='#555555',
+        zorder=5, ax=ax,)
 
-	# ncolors+1 because we're using a "zero-th" color
-	cbar = custom_colorbar(cmap, ncolors=len(jenks_labels)+1, labels=jenks_labels,\
-	    shrink=0.5)
-	cbar.ax.tick_params(labelsize=16)
+    # ncolors+1 because I'm using a "zero-th" color
+    cbar = custom_colorbar(cmap, ncolors=len(jenks_labels)+1, labels=jenks_labels,\
+        shrink=0.5)
+    cbar.ax.tick_params(labelsize=16)
 
-# fig.suptitle("Time Spent in Seattle Neighborhoods", fontdict={'size':24, 'fontweight':'bold'}, y=0.92)
-# ax.set_title("Using location data collected from my Android phone via Google Takeout", fontsize=14, y=0.98)
-# ax.text(1.35, 0.04, "Collected from 2012-2014 on Android 4.2-4.4\nGeographic data provided by data.seattle.gov", 
-#     ha='right', color='#555555', style='italic', transform=ax.transAxes)
-# ax.text(1.35, 0.01, "BeneathData.com", color='#555555', fontsize=16, ha='right', transform=ax.transAxes)
+    plt.show()
 
-plt.savefig('chloropleth.png', dpi=100, frameon=False, bbox_inches='tight',\
-    pad_inches=0.5, facecolor='#F2F2F2')
+def hexbin_map(df, df_map, m, h, w, coords, city_points):
+    '''
+    PLOT A HEXBIN MAP OF LOCATION
+    '''
+    figwidth = 14
+    fig = plt.figure(figsize=(figwidth, figwidth*h/w))
+    ax = fig.add_subplot(111, axisbg='w', frame_on=False)
+
+    # draw neighborhood patches from polygons
+    df_map['patches'] = df_map['poly'].map(lambda x: PolygonPatch(
+        x, fc='#555555', ec='#555555', lw=1, alpha=1, zorder=0))
+
+    # plot neighborhoods by adding the PatchCollection to the axes instance
+    ax.add_collection(PatchCollection(df_map['patches'].values, match_original=True))
+
+    # The number of hexbins in the x-direction
+    numhexbins = 50
+    hx = m.hexbin(
+    np.array([geom.x for geom in city_points]),
+    np.array([geom.y for geom in city_points]),
+    gridsize=(numhexbins, int(numhexbins*h/w)), #critical to get regular hexagon, must stretch to map dimensions
+    bins='log', mincnt=1, edgecolor='none', alpha=1.,
+    cmap=plt.get_cmap('Blues'))
+
+    # Draw the patches again, but this time just their borders (to achieve borders over the hexbins)
+    df_map['patches'] = df_map['poly'].map(lambda x: PolygonPatch(
+        x, fc='none', ec='#FFFF99', lw=1, alpha=1, zorder=1))
+    ax.add_collection(PatchCollection(df_map['patches'].values, match_original=True))
+
+    # Draw a map scale
+    m.drawmapscale(coords[0] + 0.05, coords[1] - 0.01,
+        coords[0], coords[1], 4.,
+        units='mi', barstyle='fancy', labelstyle='simple',
+        fillcolor1='w', fillcolor2='#555555', fontcolor='#555555',
+        zorder=5)
+
+    plt.show()
+
+def bubble_map(df, df_map, m, h, w):
+    '''
+    PLOT A BUBBLE PLOT of pothole repair times
+    '''
+    figwidth = 14
+    fig = plt.figure(figsize=(figwidth, figwidth*h/w))
+    ax = fig.add_subplot(111, axisbg='w', frame_on=False)
+
+    # draw neighborhood patches from polygons
+    df_map['patches'] = df_map['poly'].map(lambda x: PolygonPatch(
+        x, fc='#555555', ec='#555555', lw=1, alpha=1, zorder=0))
+
+    # plot neighborhoods by adding the PatchCollection to the axes instance
+    ax.add_collection(PatchCollection(df_map['patches'].values, match_original=True))
+
+    # sizes = [x*10 for x in df_95['DURATION_td'].tolist()]
+    sizes = 200
+    color = [x*5 for x in df['DURATION_td'].tolist()]
+
+    # Convert our latitude and longitude into Basemap cartesian map coordinates
+    xcart, ycart = m(df['longitude'].tolist(), df['latitude'].tolist())
+
+    # m.scatter(xcart, ycart, s=sizes, marker='o',color='lime', alpha=0.5)
+    m.scatter(xcart, ycart, s=sizes, marker='o',c=color, alpha=0.5)
+
+    # Draw the patches again, but this time just their borders
+    df_map['patches'] = df_map['poly'].map(lambda x: PolygonPatch(
+        x, fc='none', ec='#FFFF99', lw=1, alpha=1, zorder=1))
+    ax.add_collection(PatchCollection(df_map['patches'].values, match_original=True))
+
+    plt.show()
+
+def map_econ_value(df, df_map, m, h, w):
+    '''
+    Plot econ values
+    '''
+    figwidth = 14
+    fig = plt.figure(figsize=(figwidth, figwidth*h/w))
+    ax = fig.add_subplot(111, axisbg='w', frame_on=False)
+
+    # draw neighborhood patches from polygons
+    df_map['patches'] = df_map['poly'].map(lambda x: PolygonPatch(
+        x, fc='#555555', ec='#555555', lw=1, alpha=1, zorder=0))
+
+    # plot neighborhoods by adding the PatchCollection to the axes instance
+    ax.add_collection(PatchCollection(df_map['patches'].values, match_original=True))
+
+    # sizes = [x*.001 for x in df_95['Median_Home_Value'].tolist()]
+    sizes = 100
+    color = [x*5 for x in df['Median_Home_Value'].tolist()]
+
+    # Convert our latitude and longitude into Basemap cartesian map coordinates
+    xcart, ycart = m(df['longitude'].tolist(), df['latitude'].tolist()) 
+
+    # m.scatter(xcart, ycart, s=sizes, marker='o',color='darkred', alpha=0.5)
+    m.scatter(xcart, ycart, s=sizes, marker='o',c=color, alpha=0.5)
+
+    # Draw the patches again, but this time just their borders (to achieve borders over the hexbins)
+    df_map['patches'] = df_map['poly'].map(lambda x: PolygonPatch(
+        x, fc='none', ec='#FFFF99', lw=1, alpha=1, zorder=1))
+    ax.add_collection(PatchCollection(df_map['patches'].values, match_original=True))
+
+    plt.show()
+
+def main():
+    df = pd.read_pickle('df_95_features.pkl')
+    df_map, m, h, w, coords, city_points = prep_seattle_neighborhoods(df)
+    chlor_map(df, df_map, m, h, w, coords, city_points)
+    hexbin_map(df, df_map, m, h, w, coords, city_points)
+    bubble_map(df, df_map, m, h, w)
+    map_econ_value(df, df_map, m, h, w)
+
+if __name__ == '__main__':
+    main()
+    
+

@@ -1,2 +1,2 @@
 # pothole_repair
-Predicting time to repair city potholes
+Predicting time to repair Seattle city potholes

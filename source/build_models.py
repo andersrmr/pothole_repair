@@ -58,11 +58,15 @@ def clean_prep_before_model():
         df['min_dist'] = df[['Seattle_dist','Space_Needle_dist','Pike_Place_dist',\
             'Convention_Center_dist','Woodland_Park_dist']].min(axis=1)
 
+    # Conditionally rename days_end_FY feature:
+    if 'days_end_FY' in df:
+        df.rename(columns={'days_end_FY': 'months_end_FY'}, inplace=True)
+
     # Get rid of unneeded columns
     df.drop(['OBJECTID','WOKEY','LOCATION','ADDRDESC','address',\
         'Seattle_dist','Space_Needle_dist','Pike_Place_dist',\
         'Convention_Center_dist','Woodland_Park_dist','Queene_Anne_dist',\
-        'latitude','longitude','GEOID','GEO.id_x','GEO.id_y','GEO.display-label_y',\
+        'GEOID','GEO.id_x','GEO.id_y','GEO.display-label_y',\
         'GEO.display-label_x',], axis=1, inplace=True)
 
     df.neighborhood_label = df.neighborhood_label.astype('category')
@@ -89,6 +93,7 @@ def define_target_vars(df):
 
     # Focus modeling on repair durations less than the 95th percentile
     df = df[df['b_DURATION_td_95']]
+    df.to_pickle('df_95_features.pkl')
 
     return df
 
@@ -163,14 +168,18 @@ def rf_model(df, X):
     print 'AUC: ', skm.roc_auc_score(y_test, rfc.predict(X_test))
     print 
     print confusion_matrix(y_test, rfc.predict(X_test))
-    
-if __name__ == '__main__':
-    sys.path.insert(0, '../source')
-    import create_features
+
+def main():
     df = clean_prep_before_model()
     df.info()
     df = define_target_vars(df)
     X = select_predictors(df, dummies=False, choose_dummies=True)
     logit_model(df, X)
     rf_model(df, X)
+    
+if __name__ == '__main__':
+    sys.path.insert(0, '../source')
+    import create_features
+    main()
+    
     

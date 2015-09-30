@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # pothole_repair
 Predicting time to repair Seattle city potholes
 =======
@@ -6,7 +5,7 @@ Predicting time to repair Seattle city potholes
 
 ####Motivation
 
-Recently, a neighbor expressed to me his opinion that the city government where we live could not be that great since the roads are so bad.  Reflecting on this, I began to wonder if data science could help us understand more about what influences the time required for potholes to be repaired.  This is likely to be of interest to a range of people, from ordinary citizens to cyclists to city leaders to data scientists.  Slides presenting my talk on this project can be viewed here: 
+Recently, a neighbor expressed to me his opinion that the city government where we live could not be that great since the roads are so bad.  Reflecting on this, I began to wonder if data science could help us understand more about what influences the time required for potholes to be repaired.  This is likely to be of interest to a range of people, from ordinary citizens to cyclists to city leaders to data scientists. 
 
 Here are the steps I followed in investigating this question:
 
@@ -76,6 +75,3 @@ I observed some correlation among the features.  Categorical variables such as l
 * scikit-learn, a resource for Python machine learning libraries (http://scikit-learn.org/stable/)
 
 * Thanks to the team and instructors at Galvanize, as well as my classmates.
-
-
->>>>>>> f20f149c6c199291b2ef84582d49bebcd1df09c9

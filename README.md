@@ -9,8 +9,6 @@ Recently, a neighbor expressed to me his opinion that the city government where 
 
 Here are the steps I followed in investigating this question:
 
-####Built Data Pipeline
-
 #####Obtain Data
 
 Data sources included the following:
@@ -27,11 +25,11 @@ After cleaning there were records for approximately 19,000 potholes spanning fro
 
 #####Geocode Pothole Locations
 
-Pothole locations were typically descibed only in general terms, e.g., lying on a particular street between that street's intersection with two other streets.  This necessitated a geocoding step, which was carried out using a geocoding web service provided via a google API and accessed through the Python module, geopy.  Unfortunately, the API's daily and rate quotas did not allow geocoding the entire dataset in the time available.  The analysis was done on about 7,000 rows of data.
+Pothole locations were described only in general terms, e.g., lying on a particular street between that street's intersection with two other streets.  This necessitated a geocoding step, which was carried out using a geocoding web service provided via a google API and accessed through the Python module, geopy.
 
 #####Engineering Features
 
-A big part of this project was searching for and engineering features I thought likely to explain variation in pothole repair times.  I extracted these features and associated them with the appropriate pothole. The list included the following:
+A big part of this project was developing and engineering features I thought likely to explain variation in pothole repair times.  I extracted these features and associated them with the appropriate pothole. The list included the following:
 
 * Colder temperatures could be correlated with more potholes and/or longer repair times.  I mapped to each pothole the average temperature on the pothole initialization date.
 
@@ -54,9 +52,11 @@ Several of these features were mapped to facilitate visual interrogation.
 
 #####Modeling and Conclusions
 
-I alternated exploratory data analysis with building a logistic regression and a random forest classifier.  The target variable was long vs short repair times with a threshhold of 3 days, the goal Seattle DOT has set for having all potholes repaired.  
+I alternated exploratory data analysis with building a logistic regression and a random forest classifier.  The target variable was long vs short repair times with a threshhold of 3 days, the goal Seattle DOT has set for having all potholes repaired.  You could think of this as predicting whether or not the City of Seattle would keep its promise to its constituents.
 
-I observed some correlation among the features.  Categorical variables such as labels of neighborhoods and street features alone resulted in a ROC AUC score of about 55%.  The random forest classifier improved ROC AUC to 65%, based on the numerical features "cumulative number of potholes, "Median Home Value", "Temperature", "minimum distance to prominent features", and "months until end of FY".  This was the case prior to fine-tuning of model parameters.  Surprisingly, adding categorical variables provided little further improvement in model performance.  I confirmed this based on a calculation of relative feature importance.
+Categorical variables such as labels of neighborhoods and street features alone resulted in an AUC score of only about 55%.  The random forest classifier improved AUC to 65%, with the 5 top important features, "cumulative number of potholes, "Median Home Value", "Temperature", "minimum distance to prominent features", and "months until end of FY".  Surprisingly, adding categorical variables to the random forest provided little further improvement in model performance.  Logistic regression found that temperature was not a statistically significant variable in the model, pointing to some underlying correlation among the features.  
+
+The most interesting result, perhaps, was that median home value was positively correlated with repair times.  This seems unintuitive, raising the question of whether there might be a reporting bias in the dataset, where potholes are reported more frequently in higher income areas.  This would be something to follow up on in future work, along with the more general methodological challenge of figuirng out how to add to the model variables that are both independent and add the most information to the model.      
 
 ####Toolkits & Credits
  

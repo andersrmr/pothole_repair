@@ -5,7 +5,7 @@ Predicting time to repair Seattle city potholes
 
 ####Motivation
 
-Recently, a neighbor expressed to me his opinion that the city government where we live could not be that great since the roads are so bad.  Reflecting on this, I began to wonder if data science could help us understand more about what influences the time required for potholes to be repaired.  This is likely to be of interest to a range of people, from ordinary citizens to cyclists to city leaders to data scientists. 
+Recently, a neighbor expressed to me his opinion that the city government where we live could not be that great since the roads are so bad.  Reflecting on this, I began to wonder if data science could help us understand more about what influences the time required for potholes to be repaired.  This is likely to be of interest to a range of people, from ordinary citizens to cyclists to city leaders to data scientists. See this link for a  slide deck presenting my results (http://www.slideshare.net/RichardAnderson47/predicting-pothole-repair-times-for-the-city-of-seattle).
 
 Here are the steps I followed in investigating this question:
 

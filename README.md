@@ -5,7 +5,7 @@ Predicting time to repair Seattle city potholes
 
 ####Motivation
 
-Recently, a neighbor expressed to me his opinion that the city government where we live could not be that great since the roads are so bad.  Reflecting on this, I began to wonder if data science could help us understand more about what influences the time required for potholes to be repaired.  This is likely to be of interest to a range of people, from ordinary citizens to cyclists to city leaders to data scientists. See this link for a  slide deck presenting my results (http://www.slideshare.net/RichardAnderson47/predicting-pothole-repair-times-for-the-city-of-seattle).
+Recently, a neighbor expressed to me his opinion that the city government where we live could not be that great since the roads are so bad.  Reflecting on this, I began to wonder if data science could help us understand more about what influences the time required for potholes to be repaired.  This is likely to be of interest to a range of people, from ordinary citizens to cyclists to city leaders to data scientists. See this [link]  (http://www.slideshare.net/RichardAnderson47/predicting-pothole-repair-times-for-the-city-of-seattle) for a  slide deck presenting my results.
 
 Here are the steps I followed in investigating this question:
 
@@ -13,13 +13,13 @@ Here are the steps I followed in investigating this question:
 
 Data sources included the following:
 
-* Pothole data (https://catalog.data.gov/dataset/pothole-repairs-eaf38)
+* [Pothole data] (https://catalog.data.gov/dataset/pothole-repairs-eaf38)
 
-* Shapefiles of Seattle neighborhoods and street network features (https://data.seattle.gov/dataset/data-seattle-gov-GIS-shapefile-datasets/f7tb-rnup)
+* [Shapefiles of Seattle neighborhoods and street network features] (https://data.seattle.gov/dataset/data-seattle-gov-GIS-shapefile-datasets/f7tb-rnup)
 
-* U.S. Census data containing information on home values and incomes (http://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml)
+* [U.S. Census data containing information on home values and incomes] (http://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml)
 
-* Temperature and precipitation information from NOAA (http://www.noaa.gov/)
+* [Temperature and precipitation information from NOAA] (http://www.noaa.gov/)
 
 After cleaning there were records for approximately 19,000 potholes spanning from 2010 to the download date in August, 2015.
 
@@ -60,18 +60,18 @@ The most interesting result, perhaps, was that median home value was positively 
 
 ####Toolkits & Credits
  
-* https://developers.google.com/maps/documentation/geocoding/intro
+* [Google API for Geocoding] (https://developers.google.com/maps/documentation/geocoding/intro)
 
-* geopy, client for popular geocoding web services (https://pypi.python.org/pypi/geopy)
+* [geopy, client for popular geocoding web services] (https://pypi.python.org/pypi/geopy)
 
-* shapely, for maniulating geometric objects in the Cartesian plane (https://pypi.python.org/pypi/Shapely)
+* [shapely, for maniulating geometric objects in the Cartesian plane] (https://pypi.python.org/pypi/Shapely)
 
-* fiona, for reading and writing from shapefiles (https://github.com/Toblerity/Fiona)
+* [fiona, for reading and writing from shapefiles] (https://github.com/Toblerity/Fiona)
 
-* Basemap, a matplotlib toolkit for plotting 2D data on maps in python. (http://matplotlib.org/basemap/api/basemap_api.html)
+* [Basemap, a matplotlib toolkit for plotting 2D data on maps in python.] (http://matplotlib.org/basemap/api/basemap_api.html)
 
-* descartes, for using geometric objecdts as matplotlib paths and patches (https://pypi.python.org/pypi/descartes)
+* [descartes, for using geometric objecdts as matplotlib paths and patches] (https://pypi.python.org/pypi/descartes)
 
-* scikit-learn, a resource for Python machine learning libraries (http://scikit-learn.org/stable/)
+* [scikit-learn, a resource for Python machine learning libraries] (http://scikit-learn.org/stable/)
 
 * Thanks to the team and instructors at Galvanize, as well as my classmates.

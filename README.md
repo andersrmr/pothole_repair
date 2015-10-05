@@ -64,7 +64,7 @@ The most interesting result, perhaps, was that median home value was positively 
 
 * [geopy, client for popular geocoding web services] (https://pypi.python.org/pypi/geopy)
 
-* [shapely, for maniulating geometric objects in the Cartesian plane] (https://pypi.python.org/pypi/Shapely)
+* [shapely, for manipulating geometric objects in the Cartesian plane] (https://pypi.python.org/pypi/Shapely)
 
 * [fiona, for reading and writing from shapefiles] (https://github.com/Toblerity/Fiona)
 

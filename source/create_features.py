@@ -72,6 +72,24 @@ def create_seasonality(df):
 
     return df
 
+def create_weekday(df):
+    '''
+    INPUT: df
+    OUTPUT: df
+    Pass in cleaned data as dataframe and add columns representing
+    weekday vs weekend effects
+    '''
+    dayofwk = [df.ix[row, 'INITDT_dt'].weekday() for row in df.index.tolist()]
+    days_from_wknd = map(lambda x: 6-x if x != 6 or x != 7 else 0, dayofwk)
+    wkdy_or_wknd = ['weekday' if elem in range(0,6,1) else 'weekend' for elem in dayofwk]
+    
+    df['dayofwk'] = pd.Series(dayofwk, index = df.index)
+    df['b_weekend?'] = df['dayofwk'] > 5
+    df['days_from_wknd'] = pd.Series(days_from_wknd, index = df.index)
+    df['wkdy_or_wknd'] = pd.Series(wkdy_or_wknd, index = df.index)
+    
+    return df
+
 def _get_potholes(df):
     '''
     INPUT: df
@@ -359,6 +377,7 @@ def main():
     _get_potholes(df)
     df = create_distances(df)
     df = create_seasonality(df)
+    df = create_weekday(df)
     df = get_neighborhoods(df)
     df = get_census_economic_vals(df)
     df = get_pothole_count(df)
